@@ -5,6 +5,11 @@
 // github.com/tinywasm/time. Every function here is a pure computation over
 // (year, month, day) ints, so it runs identically in WASM and on the
 // backend, and needs no build-tag split.
+//
+// Every calendar-unit name this package returns (MonthName, WeekdayName) is
+// English — the canonical, untranslated form. A consumer that wants any
+// other language translates it via github.com/tinywasm/fmt/lang; this
+// package does not import that dependency or make that decision itself.
 package date
 
 import "github.com/tinywasm/fmt"
@@ -60,34 +65,60 @@ func AddMonths(year, month, delta int) (int, int) {
 	return y, m + 1
 }
 
-// MonthName returns month's Spanish name ("Enero".."Diciembre"), or "" if
-// month is out of range. Switch, not a map — TinyGo.
+// MonthName returns month's English name ("January".."December"), or "" if
+// month is out of range. English is the canonical, untranslated form — see
+// the package doc comment for why. Switch, not a map — TinyGo.
 func MonthName(month int) string {
 	switch month {
 	case 1:
-		return "Enero"
+		return "January"
 	case 2:
-		return "Febrero"
+		return "February"
 	case 3:
-		return "Marzo"
+		return "March"
 	case 4:
-		return "Abril"
+		return "April"
 	case 5:
-		return "Mayo"
+		return "May"
 	case 6:
-		return "Junio"
+		return "June"
 	case 7:
-		return "Julio"
+		return "July"
 	case 8:
-		return "Agosto"
+		return "August"
 	case 9:
-		return "Septiembre"
+		return "September"
 	case 10:
-		return "Octubre"
+		return "October"
 	case 11:
-		return "Noviembre"
+		return "November"
 	case 12:
-		return "Diciembre"
+		return "December"
+	default:
+		return ""
+	}
+}
+
+// WeekdayName returns w's English name ("Sunday".."Saturday"), or "" if w
+// is out of range. w follows Weekday's convention: 0 = Sunday … 6 =
+// Saturday. English is the canonical, untranslated form, same reasoning as
+// MonthName. Switch, not a map — TinyGo.
+func WeekdayName(w int) string {
+	switch w {
+	case 0:
+		return "Sunday"
+	case 1:
+		return "Monday"
+	case 2:
+		return "Tuesday"
+	case 3:
+		return "Wednesday"
+	case 4:
+		return "Thursday"
+	case 5:
+		return "Friday"
+	case 6:
+		return "Saturday"
 	default:
 		return ""
 	}
@@ -108,6 +139,21 @@ func ParseMonthKey(s string) (year, month int) {
 		return 0, 0
 	}
 	return y, m
+}
+
+// ParseDateKey reads "YYYY-MM-DD"; returns (0, 0, 0) if s is not a valid
+// date key — including a day that does not exist in that month (e.g.
+// "2026-02-30").
+func ParseDateKey(s string) (year, month, day int) {
+	y, m := ParseMonthKey(s)
+	if y == 0 || len(s) < 10 || s[7] != '-' {
+		return 0, 0, 0
+	}
+	d, err := fmt.Convert(s[8:10]).Int()
+	if err != nil || d < 1 || d > DaysInMonth(y, m) {
+		return 0, 0, 0
+	}
+	return y, m, d
 }
 
 // MonthKey formats (year, month) as "YYYY-MM".

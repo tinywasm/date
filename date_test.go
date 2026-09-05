@@ -108,16 +108,44 @@ func TestDateKey(t *testing.T) {
 }
 
 func TestMonthName(t *testing.T) {
-	if MonthName(1) != "Enero" {
-		t.Error("MonthName(1) should be Enero")
+	if MonthName(1) != "January" {
+		t.Error("MonthName(1) should be January")
 	}
-	if MonthName(8) != "Agosto" {
-		t.Error("MonthName(8) should be Agosto")
+	if MonthName(8) != "August" {
+		t.Error("MonthName(8) should be August")
 	}
-	if MonthName(12) != "Diciembre" {
-		t.Error("MonthName(12) should be Diciembre")
+	if MonthName(12) != "December" {
+		t.Error("MonthName(12) should be December")
 	}
 	if MonthName(13) != "" {
 		t.Error("MonthName(13) should be empty")
+	}
+}
+
+func TestWeekdayName(t *testing.T) {
+	if WeekdayName(0) != "Sunday" {
+		t.Error("WeekdayName(0) should be Sunday")
+	}
+	if WeekdayName(1) != "Monday" {
+		t.Error("WeekdayName(1) should be Monday")
+	}
+	if WeekdayName(6) != "Saturday" {
+		t.Error("WeekdayName(6) should be Saturday")
+	}
+	if WeekdayName(7) != "" {
+		t.Error("WeekdayName(7) should be empty")
+	}
+}
+
+func TestParseDateKey(t *testing.T) {
+	y, m, d := ParseDateKey("2026-08-18")
+	if y != 2026 || m != 8 || d != 18 {
+		t.Errorf("ParseDateKey(2026-08-18) = %d, %d, %d, want 2026, 8, 18", y, m, d)
+	}
+	if y, m, d := ParseDateKey("2026-02-30"); y != 0 || m != 0 || d != 0 {
+		t.Errorf("ParseDateKey(2026-02-30) = %d, %d, %d, want 0, 0, 0 (Feb has no 30th)", y, m, d)
+	}
+	if y, m, d := ParseDateKey("not-a-date"); y != 0 || m != 0 || d != 0 {
+		t.Errorf("ParseDateKey(not-a-date) = %d, %d, %d, want 0, 0, 0", y, m, d)
 	}
 }
