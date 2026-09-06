@@ -1,18 +1,18 @@
 // Package date is pure calendar arithmetic for Go and TinyGo: weekday of a
 // date, days in a month, leap years, month names, and the "YYYY-MM"/
-// "YYYY-MM-DD" key format used across the tinywasm ecosystem to identify a
+// "YYYY-MM-DD" key format used across the webtyp ecosystem to identify a
 // month or a day. No time zone, no wall clock, no JS interop — for that, use
-// github.com/tinywasm/time. Every function here is a pure computation over
+// webtyp.com/time. Every function here is a pure computation over
 // (year, month, day) ints, so it runs identically in WASM and on the
 // backend, and needs no build-tag split.
 //
 // Every calendar-unit name this package returns (MonthName, WeekdayName) is
 // English — the canonical, untranslated form. A consumer that wants any
-// other language translates it via github.com/tinywasm/fmt/lang; this
+// other language translates it via webtyp.com/fmt/lang; this
 // package does not import that dependency or make that decision itself.
 package date
 
-import "github.com/tinywasm/fmt"
+import "webtyp.com/fmt"
 
 // IsLeapYear reports whether year is a leap year.
 func IsLeapYear(year int) bool {

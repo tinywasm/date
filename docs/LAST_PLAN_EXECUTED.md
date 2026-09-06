@@ -12,18 +12,18 @@ REVIEWER: none
 An earlier version of this plan added `WeekdayName` returning Spanish names,
 matching `MonthName`'s existing behavior. That was wrong, and it exposed
 that `MonthName` itself was already wrong: **this library ships to
-`tinywasm/fmt/lang`-aware consumers, and the rule for that ecosystem is the
+`webtyp/fmt/lang`-aware consumers, and the rule for that ecosystem is the
 library never hardcodes a human language — it returns the English canonical
 name, and the CONSUMER decides what its users see.** This is not a new
 policy invented for this plan; it is already load-bearing doctrine one
 level up the stack — see
-`https://github.com/tinywasm/layout/blob/main/docs/DICTIONARY.md`:
+`https://github.com/webtyp/layout/blob/main/docs/DICTIONARY.md`:
 *"The dictionary itself is consumer-owned: the library never registers
 words... Without any dictionary, everything renders in English."*
 `layout/crudview` already renders every one of its own strings through
 `lang.Translate("Confirm")`-shaped calls for exactly this reason.
 
-`date` itself does **not** import `tinywasm/fmt/lang` and gains no new
+`date` itself does **not** import `webtyp/fmt/lang` and gains no new
 dependency — it just returns the English string, same as it does today,
 just in English instead of Spanish. Translation is entirely the
 consumer's concern, downstream (`components/calendarslider`'s plans handle
@@ -31,7 +31,7 @@ that side — see `docs/PLAN_STAGE_1_ARROW_HOVER_LAYOUT.md` and
 `docs/PLAN_STAGE_3_MOBILE_COLLAPSE.md` in `components`).
 
 **This stage is a breaking change** to `MonthName`'s return values — the
-only other consumer in the whole `tinywasm` org today is
+only other consumer in the whole `webtyp` org today is
 `components/calendarslider` (verified: `grep -rln "date.MonthName"` across
 every local repo checkout returns exactly that one file), and its own plans
 already account for the change. If you are executing this against a
@@ -181,13 +181,13 @@ func TestParseDateKey(t *testing.T) {
 ## Stage 4 — package doc comment
 
 **File: `date.go`** — the package doc comment (top of file) currently ends
-with "...for that, use github.com/tinywasm/time." Add one sentence after
+with "...for that, use github.com/webtyp/time." Add one sentence after
 it:
 
 ```go
 // Every calendar-unit name this package returns (MonthName, WeekdayName) is
 // English — the canonical, untranslated form. A consumer that wants any
-// other language translates it via github.com/tinywasm/fmt/lang; this
+// other language translates it via github.com/webtyp/fmt/lang; this
 // package does not import that dependency or make that decision itself.
 ```
 
